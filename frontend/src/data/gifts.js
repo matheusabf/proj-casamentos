@@ -21,7 +21,7 @@ const giftsData = [
 ].map((item, index) => ({
   id: index + 1,
   name: item[0],
-  price: item[1].toFixed(2)
+  price: item[1] // 👈 número
 }));
 
 export default giftsData;

@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import floralCerimonia from "./assets/floral-cerimonia.jpg";
 import "./App.css";
 
 import giftsData from "./data/gifts";
 import PixModal from "./components/PixModal";
 
-const PIX_KEY = "+5511975507168";
-const PIX_NAME = "MATHEUS ALVES BENTO FER";
+const PIX_KEY = "50810061813";
+const PIX_NAME = "VICTOR MOLINA";
 const PIX_CITY = "SAO PAULO";
 
 export default function WeddingPage() {
   const [pixModal, setPixModal] = useState(null);
   const [pixCopied, setPixCopied] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [gifts, setGifts] = useState([]);
+
+  useEffect(() => {
+    // simula carregamento (pode trocar por API depois)
+    setTimeout(() => {
+      setGifts(giftsData);
+      setLoading(false);
+    }, 1500);
+  }, []);
 
   function formatPixField(id, value) {
     return id + value.length.toString().padStart(2, "0") + value;
@@ -53,7 +64,7 @@ export default function WeddingPage() {
       formatPixField("26", merchantAccount) +
       formatPixField("52", "0000") +
       formatPixField("53", "986") +
-      formatPixField("54", gift.price) +
+      formatPixField("54", gift.price.toFixed(2)) + // ⚠️ corrigi aqui (faltava +)
       formatPixField("58", "BR") +
       formatPixField("59", PIX_NAME) +
       formatPixField("60", PIX_CITY) +
@@ -78,6 +89,18 @@ export default function WeddingPage() {
     setTimeout(() => setPixCopied(false), 3000);
   }
 
+  // 🧩 Skeleton
+  function SkeletonGift() {
+    return (
+      <div className="gift-card">
+        <div className="skeleton skeleton-image" />
+        <div className="skeleton skeleton-text" />
+        <div className="skeleton skeleton-price" />
+        <div className="skeleton skeleton-button" />
+      </div>
+    );
+  }
+
   return (
     <div className="wedding-page">
 
@@ -90,7 +113,7 @@ export default function WeddingPage() {
 
         <header className="header">
           <h1 className="title">Larissa & Victor</h1>
-          <span className="date">XX.10.2026</span>
+          <span className="date">10.10.2026</span>
         </header>
 
         <section className="description">
@@ -106,20 +129,34 @@ export default function WeddingPage() {
         </section>
 
         <div className="gifts-grid">
-          {giftsData.map(g => (
-            <div key={g.id} className="gift-card">
-              <div className="gift-icon">🎁</div>
-              <p>{g.name}</p>
-              <strong>R$ {g.price}</strong>
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonGift key={i} />
+              ))
+            : gifts.map(g => (
+                <div key={g.id} className="gift-card">
 
-              <button
-                className="primary-button"
-                onClick={() => handlePix(g)}
-              >
-                Presentear
-              </button>
-            </div>
-          ))}
+                  <img
+                    src={`/assets/presentes/${g.id}.jpg`}
+                    alt={g.name}
+                    className="gift-image"
+                    onError={(e) => {
+                      e.target.src = "/assets/presentes/default.jpg";
+                    }}
+                  />
+
+                  <p>{g.name}</p>
+                  <strong>R$ {g.price.toFixed(2)}</strong>
+
+                  <button
+                    className="primary-button"
+                    onClick={() => handlePix(g)}
+                  >
+                    Presentear
+                  </button>
+                </div>
+              ))
+          }
         </div>
 
         <section className="section">
@@ -128,7 +165,7 @@ export default function WeddingPage() {
 
           <a
             className="primary-button"
-            href="https://forms.gle/334rbHEoBa69PieRA"
+            href="https://forms.gle/AqBGgMF4HJyRFPHK8"
             target="_blank"
           >
             Confirmar Presença
@@ -141,7 +178,7 @@ export default function WeddingPage() {
           <p>
             Gostaríamos muito de contar com a presença de todos vocês para a celebração da nossa união.
             <br />
-            XX de XXXXX de 2026 às XXh.
+            10 de Outubro de 2026 às 16h.
             <br />
             Dress Code: Esporte Fino
           </p>

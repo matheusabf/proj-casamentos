@@ -24,7 +24,7 @@ export default function PixModal({
                     🎁 {pixModal.gift.name}
                     <br />
                     <strong>
-                        R$ {pixModal.gift.price.replace(".", ",")}
+                        R$ {pixModal.gift.price.toFixed(2).replace(".", ",")}
                     </strong>
                 </div>
                 <div className="qr-container">
